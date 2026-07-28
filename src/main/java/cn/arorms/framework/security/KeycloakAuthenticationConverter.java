@@ -9,9 +9,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class KeycloakAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+public class KeycloakAuthenticationConverter<T> implements Converter<Jwt, AbstractAuthenticationToken> {
+
+    private final Function<Jwt, T> principalMapper;
+
+    private final Function<T, String> nameExtractor;
+
+    public KeycloakAuthenticationConverter(Function<Jwt, T> principalMapper, Function<T, String> nameExtractor) {
+        this.principalMapper = principalMapper;
+        this.nameExtractor = nameExtractor;
+    }
 
     @Override
     public AbstractAuthenticationToken convert(Jwt jwt) {
@@ -30,12 +40,9 @@ public class KeycloakAuthenticationConverter implements Converter<Jwt, AbstractA
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
                 .collect(Collectors.toSet());
 
-        User user = new User(
-                jwt.getSubject(),
-                jwt.getClaimAsString("preferred_username"),
-                jwt.getClaimAsString("email")
-        );
+        T principal = principalMapper.apply(jwt);
+        String principalName = nameExtractor.apply(principal);
 
-        return new UserJwtAuthenticationToken(jwt, authorities, user);
+        return new UserJwtAuthenticationToken<>(jwt, authorities, principal, principalName);
     }
 }

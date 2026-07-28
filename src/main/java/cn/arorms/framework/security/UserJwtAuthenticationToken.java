@@ -8,20 +8,21 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import java.util.Collection;
 
 @Getter
-public class UserJwtAuthenticationToken extends JwtAuthenticationToken {
+public class UserJwtAuthenticationToken<T> extends JwtAuthenticationToken {
 
-    private final User user;
+    private final T userPrincipal;
 
     public UserJwtAuthenticationToken(Jwt jwt,
                                       Collection<? extends GrantedAuthority> authorities,
-                                      User user) {
-        super(jwt, authorities, user.getUsername());
-        this.user = user;
+                                      T userPrincipal,
+                                      String name) {
+        super(jwt, authorities, name);
+        this.userPrincipal = userPrincipal;
     }
 
     @Override
     public Object getPrincipal() {
-        return user;
+        return userPrincipal;
     }
 }
 

@@ -1,0 +1,6 @@
+2026-07-28
+
+1. Add AudienceValidator for JWT aud validation
+2. Add JwtPrincipalExtractor interface
+3. Add UserPrincipalExtractor default implementation
+4. Add SecurityAutoConfiguration to auto-wire JwtDecoder and KeycloakAuthenticationConverter

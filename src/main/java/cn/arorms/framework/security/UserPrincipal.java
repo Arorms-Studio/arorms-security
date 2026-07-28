@@ -3,11 +3,9 @@ package cn.arorms.framework.security;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.Set;
-
 @Data
 @AllArgsConstructor
-public class User {
+public class UserPrincipal {
     private String id;
     private String username;
     private String email;
